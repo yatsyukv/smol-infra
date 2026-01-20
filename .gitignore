@@ -137,3 +137,19 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Infrastructure specific
+*.sql
+*.sql.gz
+backups/
+*.backup
+
+# Docker local data (if mounted)
+data/
+postgres-data/
+redis-data/
+metabase-data/
+
+# Generated secrets
+secrets.env
+.secrets
