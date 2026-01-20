@@ -16,7 +16,7 @@ services:
       MB_SITE_URL: https://${METABASE_DOMAIN}
       MB_SITE_NAME: ${MB_SITE_NAME:-Analytics}
       MB_ANON_TRACKING_ENABLED: "false"
-      JAVA_OPTS: "-Xmx1g"
+      JAVA_OPTS: "-Xmx1g -Xms512m"
     volumes:
       - metabase-plugins:/plugins
     networks:
@@ -29,6 +29,12 @@ services:
       - "traefik.http.routers.metabase.tls.certresolver=letsencrypt"
       - "traefik.http.services.metabase.loadbalancer.server.port=3000"
       - "traefik.docker.network=dokploy-network"
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+        reservations:
+          memory: 512M
     restart: unless-stopped
 
   postgres:
@@ -46,6 +52,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
     restart: unless-stopped
 
 volumes:

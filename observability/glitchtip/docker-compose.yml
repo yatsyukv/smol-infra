@@ -28,6 +28,12 @@ services:
       - "traefik.http.routers.glitchtip.tls.certresolver=letsencrypt"
       - "traefik.http.services.glitchtip.loadbalancer.server.port=8000"
       - "traefik.docker.network=dokploy-network"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
     restart: unless-stopped
 
   worker:
@@ -48,6 +54,12 @@ services:
     command: ./bin/run-celery-with-beat.sh
     networks:
       - internal
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
     restart: unless-stopped
 
   postgres:
@@ -65,15 +77,27 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
     restart: unless-stopped
 
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
     volumes:
       - redis-data:/data
     networks:
       - internal
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+        reservations:
+          memory: 64M
     restart: unless-stopped
 
 volumes:
