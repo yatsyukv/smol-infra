@@ -1,0 +1,27 @@
+# Local development override
+# Usage: docker compose -f docker-compose.yml -f docker-compose.local.yml up
+#
+# This override:
+# - Removes Dokploy/Traefik dependencies
+# - Exposes ports directly for local access
+# - Uses default local domain
+
+services:
+  metabase:
+    ports:
+      - "3000:3000"
+    networks:
+      - default
+    labels: []
+    environment:
+      MB_SITE_URL: http://localhost:3000
+
+  postgres:
+    ports:
+      - "5433:5432"
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge

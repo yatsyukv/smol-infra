@@ -1,4 +1,5 @@
 .PHONY: help setup secrets validate backup-glitchtip backup-metabase backup-all clean
+.PHONY: local-glitchtip local-metabase local-down
 
 # Default target
 help:
@@ -8,6 +9,11 @@ help:
 	@echo "  make setup          - Generate secrets and create .env files"
 	@echo "  make secrets        - Generate and display secrets (no file write)"
 	@echo "  make validate       - Validate docker-compose files"
+	@echo ""
+	@echo "Local Development:"
+	@echo "  make local-glitchtip   - Run GlitchTip locally (http://localhost:8000)"
+	@echo "  make local-metabase    - Run Metabase locally (http://localhost:3000)"
+	@echo "  make local-down        - Stop all local services"
 	@echo ""
 	@echo "Backups (run on VPS with running containers):"
 	@echo "  make backup-glitchtip  - Backup GlitchTip PostgreSQL"
@@ -59,6 +65,23 @@ backup-all: backup-glitchtip backup-metabase
 	@echo ""
 	@echo "All backups complete."
 	@ls -la $(BACKUP_DIR)/*.sql.gz 2>/dev/null | tail -5
+
+# Local Development
+local-glitchtip:
+	@echo "Starting GlitchTip locally..."
+	@echo "Access at: http://localhost:8000"
+	cd observability/glitchtip && docker compose -f docker-compose.yml -f docker-compose.local.yml up
+
+local-metabase:
+	@echo "Starting Metabase locally..."
+	@echo "Access at: http://localhost:3000"
+	cd observability/metabase && docker compose -f docker-compose.yml -f docker-compose.local.yml up
+
+local-down:
+	@echo "Stopping local services..."
+	-cd observability/glitchtip && docker compose -f docker-compose.yml -f docker-compose.local.yml down
+	-cd observability/metabase && docker compose -f docker-compose.yml -f docker-compose.local.yml down
+	@echo "Done."
 
 # Cleanup
 clean:
